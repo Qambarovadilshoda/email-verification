@@ -16,9 +16,18 @@ class CheckEmailVerifiedMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::user() || is_null(Auth::user()->email_verified_at)) {
-            return redirect()->route("verify-notice");
+        $user = $this->getUser();
+
+        if ($user && is_null($user->email_verified_at)) {
+            return redirect()->route('loginForm');
         }
+
         return $next($request);
     }
+
+    private function getUser()
+    {
+        return $_SESSION['user'] ?? null;
+    }
+
 }
